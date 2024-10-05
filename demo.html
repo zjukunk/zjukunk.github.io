@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>丘比特公司|ZJUKUNK 跑团记录专题展示页</title>
+    <link rel="stylesheet" href="demo.css">
+    <link href="https://fonts.font.im/css?family=Anton" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><a href="https://zjukunk.github.io">博客主页</a></li>
+            <li><a href="https://space.bilibili.com/381593089">Bilibili</a></li>
+            <li><a href="http://log.weizaima.com/?key=6ci3#885968">LOG链接</a></li>
+            <li class="dropdown">
+                <a href="#contact" class="dropbtn">友情链接</a>
+                <div class="dropdown-content">
+                    <a href="https://zjukunk.github.io/2024/09/23/COC%E8%A7%92%E8%89%B2%E5%8D%A1%E6%A8%A1%E6%9D%BF/">占位先啦</a>
+                    <a href="https://zjukunk.github.io/2024/09/23/COC%E8%A7%92%E8%89%B2%E5%8D%A1%E6%A8%A1%E6%9D%BF/">占位先啦</a>
+                    <a href="https://zjukunk.github.io/2024/09/23/COC%E8%A7%92%E8%89%B2%E5%8D%A1%E6%A8%A1%E6%9D%BF/">占位先啦</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <div class="content-wrapper">
+        <div class="content" id="home">
+            <p>      </p>
+            <p>Call Of Cthulhu   TRPG</p>
+            <p>coc7th special model for Mid-Autumn Festival</p>
+            <div class="container">
+                <img src="tilte.png" >
+            </div>
+        <p>跑团记录专题展示页</p>
+        <p2></p2>
+        <div id="quote">Loading...</div>
+        <script class="text-reveal">
+        fetch('https://v1.hitokoto.cn//?c=d&c=i&c=k&')
+         .then(response => response.json())
+         .then(data => {
+            document.getElementById('quote').textContent = data.hitokoto;
+        })
+        .catch(error => {
+             console.error('Error fetching API:', error);
+            document.getElementById('quote').textContent = 'Failed to load quote.';
+         });
+        </script>
+        <p></p>
+        <ps></ps>
+        <ps>楷体文字来自一言api</ps>
+    </div>
+    <div class="content" id="model">
+        <ps></ps>
+        <div class="container">
+            <img src="model.png" >
+        </div>
+        <div class="modelcontent">
+            <div class="left-aligned-kaiti-text">
+                这里是 1923 年的伦敦，经历过一战，英国平静的外表下是暗流涌动。三月的一个星期
+                二，一位名叫奥雷的老太太登门拜访你们，请求你们帮助她寻找自己的房客安妮小姐。
+                奥雷太太是一位六十多岁的老妇人，白发苍苍，身形佝偻，她表示自己拥有一处不小的
+                房产，但儿子在一战中战死了，现在就她孤苦伶仃一个人，平时靠租房收取租金生活，有三
+               个租客，在经济上还算宽裕，而这次前来正是请你们帮忙寻找她的租客之一的安妮小姐。
+                安妮小姐是她租住最久的一个房客，两年前从乡下来到伦敦打工，就租住在奥雷太太的
+                公寓里，今年她 23 岁，金色的长发，笑起来有两个酒窝，说话有一些口音，是一个开朗善
+                解人意的漂亮女孩，两年来她一直在生活上对奥雷太太很照顾，两个人生活融洽，就像干女
+                儿一样，而几天前安妮小姐不辞而别，房租还剩两个月的空余，行李也没有收拾，但人没有
+                再回来也没有任何消息，对此奥雷太太很是担心。
+              </div>
+              <img src="rule.png" >
+    </div>
+    <div class="content" id="pl">
+        <div class="container">
+            <img src="playerintro.png" >
+        </div>
+        <div class="center-container">
+            <div class="image-container">
+                <img src="player.png">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+
