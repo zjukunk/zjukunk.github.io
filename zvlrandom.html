@@ -18,15 +18,15 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="随机选择器              body {             font-family: Arial, sans-serif;             background-color: #f0f0f0;             margin: 0;             padding: 0;         }         .con">
+        <meta name="description" content="随机数（支持种子版）              body {             font-family: Arial, sans-serif;             background-color: #f0f0f0;             margin: 0;             padding: 0;         }">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Welcome to My Blog!">
 <meta property="og:url" content="http://example.com/zvlrandom.html">
 <meta property="og:site_name" content="Welcome to My Blog!">
-<meta property="og:description" content="随机选择器              body {             font-family: Arial, sans-serif;             background-color: #f0f0f0;             margin: 0;             padding: 0;         }         .con">
+<meta property="og:description" content="随机数（支持种子版）              body {             font-family: Arial, sans-serif;             background-color: #f0f0f0;             margin: 0;             padding: 0;         }">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-03-28T16:02:37.173Z">
-<meta property="article:modified_time" content="2025-03-28T15:29:11.200Z">
+<meta property="article:published_time" content="2025-04-05T15:34:28.028Z">
+<meta property="article:modified_time" content="2025-04-05T15:12:35.465Z">
 <meta property="article:author" content="鲲鲲">
 <meta name="twitter:card" content="summary">
     
@@ -592,7 +592,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机选择器</title>
+    <title>随机数（支持种子版）</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -656,120 +656,170 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: center;
-            font-size: 16px; /* 调整字号 */
+            font-size: 16px;
         }
         th {
             background-color: #f2f2f2;
         }
         .square {
-            width: 50px; /* 设置正方形单元格的宽度 */
-            height: 50px; /* 设置正方形单元格的高度 */
+            width: 50px;
+            height: 50px;
+        }
+        .seed-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>ZVL     随机数生成器</h1>
-        <h2>ver0.2  周年庆版本，截止到弓箭手  made by kunk</h2>
+        <h1>ZVL 随机数生成器（带种子版）</h1>
+        <h2>ver0.3 支持种子复现</h2>
+        <h3>made by kunk</h3>
+        <h3>更新鸣谢：流心芒果派</h3>
+        
         <div class="input-group">
-            <label for="configCode">请输入配置码（默认0000）：</label>
+            <label for="configCode">配置码（默认0000）：</label>
             <input type="text" id="configCode" value="0000">
         </div>
+        
+        <div class="input-group">
+            <label for="seed">随机种子（留空生成新种子）：</label>
+            <input type="text" id="seed" placeholder="示例：1700000000000">
+        </div>
+        
         <button class="button" onclick="generateRandom()">生成随机结果</button>
+        
         <div class="result" id="result"></div>
         <table id="table"></table>
     </div>
+
     <script>
+        // 基础数据
         const survivors = ["幸运儿", "医生", "律师", "慈善家", "园丁", "魔术师", "冒险家", "佣兵", "空军", "机械师", "前锋", "盲女", "祭司", "调香师", "牛仔", "舞女", "先知", "入殓师", "勘探员", "咒术师", "野人", "杂技演员", "大副", "调酒师", "邮差", "守墓人", "囚徒", "昆虫学者", "画家", "击球手", "玩具商", "心理学家", "病患", "小说家", "小女孩", "哭泣小丑", "教授", "古董商", "作曲家", "记者", "飞行家", "拉拉队员", "木偶师", "火灾调查员", "法罗女士", "骑士","气象学家","弓箭手"];
         const hunters = ["喧嚣","跛脚羊","厂长", "小丑", "鹿头", "杰克", "蜘蛛", "红蝶", "黄衣之主", "宿伞之魂", "摄影师", "疯眼", "梦之女巫", "爱哭鬼", "孽蜥", "红夫人", "26号守卫", "使徒", "小提琴家", "雕刻家", "博士", "破轮", "渔女", "蜡像师", "噩梦", "记录员", "隐士", "守夜人", "歌剧演员", "愚人金", "时空之影"];
         const stalent = ["回光返照", "化险为夷", "膝跳反射", "飞轮效应"];
         const htalent = ["底牌", "幽闭空间", "张狂", "挽留"];
         const mapp = ["军工厂", "红教堂", "圣心医院", "永眠镇", "唐人街", "月亮河公园", "湖景村", "不归林"];
 
-        function select(lst, num, operator) {
+        // 可播种随机数生成器
+        class SeededRandom {
+            constructor(seed) {
+                seed = seed % 2147483647;
+                if (seed <= 0) seed += 2147483646;
+                this.seed = seed;
+            }
+
+            next() {
+                this.seed = (this.seed * 48271) % 2147483647;
+                return (this.seed - 1) / 2147483646;
+            }
+        }
+
+        // 随机选择函数
+        function select(lst, num, operator, rand) {
             if (operator === 0) {
-                return lst.sort(() => Math.random() - 0.5).slice(0, num);
+                return [...lst].sort(() => rand.next() - 0.5).slice(0, num);
             } else {
-                return Array.from({ length: num }, () => lst[Math.floor(Math.random() * lst.length)]);
+                return Array.from({ length: num }, () => 
+                    lst[Math.floor(rand.next() * lst.length)]
+                );
             }
         }
 
+        // 主生成函数
         function generateRandom() {
-            const configCode = document.getElementById('configCode').value;
-            let a = configCode;
-            if ((parseInt(a) <= 999 || parseInt(a) >= 10000) && a !== '0000') {
-                a = "0000";
-                alert("不支持的配置码，将使用默认配置");
-            }
-            const plsurvivor = select(survivors, 4, parseInt(a[0]));
-            const plhunter = select(hunters, 1, parseInt(a[1]));
-            const plmapp = select(mapp, 1, parseInt(a[2]));
-            const plhtalent = select(htalent, 2, parseInt(a[3]));
+            // 处理种子输入
+            let seedInput = document.getElementById('seed').value;
+            let seed = seedInput ? parseInt(seedInput) : Date.now();
+            if (!seedInput) document.getElementById('seed').value = seed;
+            const rand = new SeededRandom(seed);
 
-            let resultHtml = "<h2>求生者阵容：</h2>";
-            for (let i = 0; i < 4; i++) {
-                resultHtml += `<p>${plsurvivor[i]}</p>`;
-                const plstalent = select(stalent, 2, parseInt(a[3]));
-                for (let j = 0; j < 2; j++) {
-                    resultHtml += `<p> - ${plstalent[j]}</p>`;
-                }
-                resultHtml += "<br>";
-            }
-            resultHtml += `<h2>监管者是：${Math.floor(Math.random() * 5) + 1}</h2>`;
-            resultHtml += "<h2>监管者阵容：</h2>";
-            resultHtml += `<p>${plhunter[0]}</p>`;
-            resultHtml += `<p>${plhtalent[0]}, ${plhtalent[1]}</p>`;
-            resultHtml += "<br>";
-            resultHtml += `<h2>地图：</h2>`;
-            resultHtml += `<p>${plmapp[0]}</p>`;
+            // 处理配置码
+            const configCode = document.getElementById('configCode').value.padEnd(4, '0').substr(0,4);
+            const operators = configCode.split('').map(Number);
 
+            // 生成各项内容
+            const plsurvivor = select(survivors, 4, operators[0], rand);
+            const plhunter = select(hunters, 1, operators[1], rand);
+            const plmapp = select(mapp, 1, operators[2], rand);
+            const plhtalent = select(htalent, 2, operators[3], rand);
+
+            // 构建结果输出
+            let resultHtml = `<div class="seed-info">使用种子：${seed}</div>`;
+            resultHtml += "<h2>求生者阵容：</h2>";
+            
+            plsurvivor.forEach(char => {
+                const talents = select(stalent, 2, operators[3], rand);
+                resultHtml += `<p>${char}（天赋：${talents.join(" + ")}）</p>`;
+            });
+
+            resultHtml += `<h2>监管者：${plhunter[0]}（天赋：${plhtalent.join(" + ")}）</h2>`;
+            resultHtml += `<h2>地图：${plmapp[0]}</h2>`;
+            
             document.getElementById('result').innerHTML = resultHtml;
-
-            generateTable(plmapp[0], plsurvivor.concat(plhunter));
+            generateTable(plmapp[0], plsurvivor.concat(plhunter), rand);
         }
 
-        function generateTable(map, characters) {
-            const table = document.getElementById('table');
-            table.innerHTML = '';
+        // 生成表格布局
+    function generateTable(map, characters, rand) {
+        const table = document.getElementById('table');
+        table.innerHTML = '';
 
-            let rows, cols;
-            if (["军工厂", "红教堂", "圣心医院", "不归林", "唐人街"].includes(map)) {
-                rows = 3;
-                cols = 3;
-            } else if (["湖景村", "月亮河公园"].includes(map)) {
-                rows = 3;
-                cols = 4;
-            } else if (map === "永眠镇") {
-                rows = 3;
-                cols = 4;
-            }
-
-            for (let i = 0; i < rows; i++) {
+        // 永眠镇特殊布局处理
+        if (map === "永眠镇") {
+            // 创建3行3列基础布局
+            for (let i = 0; i < 3; i++) {
                 const tr = document.createElement('tr');
-                for (let j = 0; j < cols; j++) {
+                // 前3列单元格
+                for (let j = 0; j < 3; j++) {
                     const td = document.createElement('td');
-                    if (i === 2 && j === 3 && map === "永眠镇") {
-                        td.colSpan = 3;
-                    } else {
-                        td.classList.add('square'); // 添加正方形单元格类
-                    }
+                    td.className = 'square';
+                    tr.appendChild(td);
+                }
+                // 右侧合并单元格（仅第一行添加）
+                if (i === 0) {
+                    const td = document.createElement('td');
+                    td.className = 'square';
+                    td.rowSpan = 3;
                     tr.appendChild(td);
                 }
                 table.appendChild(tr);
             }
-
-            const cells = table.getElementsByTagName('td');
-            const allCharacters = characters;
-            const usedIndices = new Set();
-            for (let i = 0; i < allCharacters.length; i++) {
-                let randomIndex;
-                do {
-                    randomIndex = Math.floor(Math.random() * cells.length);
-                } while (usedIndices.has(randomIndex));
-                usedIndices.add(randomIndex);
-                cells[randomIndex].textContent = allCharacters[i];
+        } else {
+            // 其他地图处理逻辑
+            let rows = 3;
+            let cols = 3;
+            if (map === "湖景村" || map === "月亮河公园") {
+                cols = 4;
+            }
+            
+            for (let i = 0; i < rows; i++) {
+                const tr = document.createElement('tr');
+                for (let j = 0; j < cols; j++) {
+                    const td = document.createElement('td');
+                    td.className = 'square';
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
             }
         }
+
+        // 使用种子随机分配角色
+        const cells = table.getElementsByTagName('td');
+        const usedIndices = new Set();
+        
+        characters.forEach(char => {
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(rand.next() * cells.length);
+            } while (usedIndices.has(randomIndex));
+            
+            usedIndices.add(randomIndex);
+            cells[randomIndex].textContent = char;
+        });
+    }
     </script>
 </body>
 </html>
